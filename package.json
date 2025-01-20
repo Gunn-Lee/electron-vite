@@ -18,34 +18,6 @@
     "test:unit": "vitest src",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
-  "build": {
-    "appId": "com.gunn.electron-vite",
-    "files": [
-      "dist-electron",
-      "dist-vite"
-    ],
-    "extraResources": [
-      {
-        "from": "dist-electron/preload.cjs",
-        "to": "dist-electron/preload.cjs"
-      },
-      "src/assets/**"
-    ],
-    "icon": "./icon512.png",
-    "mac": {
-      "target": "dmg"
-    },
-    "linux": {
-      "target": "AppImage",
-      "category": "Utility"
-    },
-    "win": {
-      "target": [
-        "portable",
-        "msi"
-      ]
-    }
-  },
   "dependencies": {
     "os-utils": "^0.0.14",
     "react": "^18.3.1",

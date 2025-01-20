@@ -1,8 +1,14 @@
 {
   "appId": "com.gunn.electron-vite",
   "files": ["dist-electron", "dist-vite"],
-  "extraResources": ["dist-electron/preload.cjs"],
-  "icon": "./icon64.png",
+  "extraResources": [
+    {
+      "from": "dist-electron/preload.cjs",
+      "to": "dist-electron/preload.cjs"
+    },
+    "src/assets/**"
+  ],
+  "icon": "./icon512.png",
   "mac": {
     "target": "dmg"
   },
