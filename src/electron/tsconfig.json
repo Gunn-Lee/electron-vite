@@ -10,8 +10,10 @@
 
     //define location of generated js files
     "outDir": "../../dist-electron",
-    
+
     //ignore errors from dependencies
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    "types": ["../../types"]
   }
 }

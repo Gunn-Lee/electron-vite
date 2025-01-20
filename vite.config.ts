@@ -7,5 +7,9 @@ export default defineConfig({
   base: "./",
   build: {
     outDir: 'dist-vite'
+  },
+  server: {
+    port: 5050,
+    strictPort: true,
   }
 })

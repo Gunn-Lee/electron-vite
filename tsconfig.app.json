@@ -20,7 +20,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "types": ["./types"]
   },
   "include": ["src"],
   "exclude": ["src/electron"] // Exclude Electron main process for custom setup
