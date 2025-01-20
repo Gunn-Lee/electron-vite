@@ -6,7 +6,6 @@ import { createTray } from './tray.js'
 import { createMenu } from './menu.js'
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
 
 app.on('ready', () => {
   const mainWindow = new BrowserWindow({
