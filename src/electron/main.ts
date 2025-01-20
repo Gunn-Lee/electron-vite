@@ -1,27 +1,25 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
-import path from 'path'
-import { ipcMainHandle, isDev } from './util.js'
+import { app, BrowserWindow, Menu } from 'electron'
+import { ipcMainHandle, ipcMainOn, isDev } from './util.js'
 import { getStaticData, pollResources } from './resourceManager.js'
-import { getPreloadPath } from './pathResolver.js'
-
-type test = string
+import { getPreloadPath, getUIPath } from './pathResolver.js'
+import { createTray } from './tray.js'
+import { createMenu } from './menu.js'
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
 
 app.on('ready', () => {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
-      // nodeIntegration: true -> security risk
       preload: getPreloadPath()
     }
+    // // disables default system frame (dont do this if you want a proper working menu bar)
+    // frame: false
   })
-
   if (isDev()) {
-    console.log('Development mode')
     mainWindow.loadURL('http://localhost:5050')
   } else {
-    console.log('Production mode')
-    mainWindow.loadFile(path.join(app.getAppPath(), '/dist-vite/index.html'))
+    mainWindow.loadFile(getUIPath())
   }
 
   pollResources(mainWindow)
@@ -29,4 +27,74 @@ app.on('ready', () => {
   ipcMainHandle('getStaticData', () => {
     return getStaticData()
   })
+
+  ipcMainOn('sendFrameAction', (payload) => {
+    switch (payload) {
+      case 'CLOSE':
+        mainWindow.close()
+        break
+      case 'MAXIMIZE':
+        mainWindow.maximize()
+        break
+      case 'MINIMIZE':
+        mainWindow.minimize()
+        break
+    }
+  })
+
+  ipcMainHandle('createFolder', async () => {
+    return await createFolder()
+  })
+
+  createTray(mainWindow)
+  handleCloseEvents(mainWindow)
+  createMenu(mainWindow)
 })
+
+function handleCloseEvents(mainWindow: BrowserWindow) {
+  let willClose = false
+
+  mainWindow.on('close', (e) => {
+    if (willClose) {
+      return
+    }
+    e.preventDefault()
+    mainWindow.hide()
+    if (app.dock) {
+      app.dock.hide()
+    }
+  })
+
+  app.on('before-quit', () => {
+    willClose = true
+  })
+
+  mainWindow.on('show', () => {
+    willClose = false
+  })
+}
+
+async function createFolder(): Promise<{
+  type: string
+  folderName: string
+  message: string
+}> {
+  const folderPath = path.join(
+    isDev() ? app.getAppPath() : app.getPath('desktop'),
+    '/tmp/test-folder'
+  )
+  console.log('Creating folder:', folderPath)
+
+  // create folder logic
+  try {
+    await fs.promises.mkdir(folderPath, { recursive: true })
+    return {
+      type: 'success',
+      folderName: folderPath,
+      message: 'Folder created successfully'
+    }
+  } catch (error) {
+    console.error('Error creating folder:', error)
+    throw error
+  }
+}

@@ -1,17 +1,19 @@
 const electron = require('electron')
 
-/**
- * Only expose allowed electron method to the window object
- * Usage Example: window.electron.subscribeStatistics((statistics) => console.log(statistics))
- */
-
 electron.contextBridge.exposeInMainWorld('electron', {
   subscribeStatistics: (callback) =>
-    ipcOn('statistics', (statistics) => callback(statistics)),
-  getStaticData: () => ipcInvoke('getStaticData')
+    ipcOn('statistics', (stats) => {
+      callback(stats)
+    }),
+  subscribeChangeView: (callback) =>
+    ipcOn('changeView', (view) => {
+      callback(view)
+    }),
+  getStaticData: () => ipcInvoke('getStaticData'),
+  sendFrameAction: (payload) => ipcSend('sendFrameAction', payload),
+  createFolder: () => ipcInvoke('createFolder')
 } satisfies Window['electron'])
 
-// ipc invoke and on using adapter pattern
 function ipcInvoke<Key extends keyof EventPayloadMapping>(
   key: Key
 ): Promise<EventPayloadMapping[Key]> {
@@ -20,9 +22,16 @@ function ipcInvoke<Key extends keyof EventPayloadMapping>(
 
 function ipcOn<Key extends keyof EventPayloadMapping>(
   key: Key,
-  callback: (event: EventPayloadMapping[Key]) => void
+  callback: (payload: EventPayloadMapping[Key]) => void
 ) {
   const cb = (_: Electron.IpcRendererEvent, payload: any) => callback(payload)
   electron.ipcRenderer.on(key, cb)
   return () => electron.ipcRenderer.off(key, cb)
+}
+
+function ipcSend<Key extends keyof EventPayloadMapping>(
+  key: Key,
+  payload: EventPayloadMapping[Key]
+) {
+  electron.ipcRenderer.send(key, payload)
 }
