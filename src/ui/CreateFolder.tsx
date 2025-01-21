@@ -6,8 +6,6 @@ type CreateFolder = {
 
 export function CreateFolder(props: CreateFolder) {
   const [folderName, setFolderName] = useState(props.folderName)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
 
   const handleCreateFolder = async () => {
     try {
@@ -19,7 +17,11 @@ export function CreateFolder(props: CreateFolder) {
       alert(result.message)
     } catch (error) {
       console.error(error)
-      alert('Failed to create folder: ')
+      if (error instanceof Error) {
+        alert(error.message)
+      } else {
+        alert('An error occurred')
+      }
     }
   }
 
@@ -31,8 +33,6 @@ export function CreateFolder(props: CreateFolder) {
         onChange={(e) => setFolderName(e.target.value)}
       />
       <button onClick={handleCreateFolder}>Create Folder</button>
-      {error && <p>{error}</p>}
-      {success && <p>Folder created successfully</p>}
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { useStatistics } from './useStatistics'
 import { Chart } from './Chart'
-import { CreateFolder } from './CreateFolder'
+// import { CreateFolder } from './CreateFolder'
 
 function App() {
   const staticData = useStaticData()
@@ -38,7 +38,7 @@ function App() {
   return (
     <div className="App">
       {/* <Header /> */}
-      <CreateFolder folderName="New Folder" />
+      {/* <CreateFolder folderName="New Folder" /> */}
       <div className="main">
         <div>
           <SelectOption
