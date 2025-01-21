@@ -41,8 +41,8 @@ app.on('ready', () => {
     }
   })
 
-  ipcMainHandle('createFolder', async () => {
-    return await createFolder()
+  ipcMainHandle('createFolder', async (folderName: string | undefined) => {
+    return await createFolder(folderName || 'new-folder')
   })
 
   createTray(mainWindow)
@@ -73,14 +73,10 @@ function handleCloseEvents(mainWindow: BrowserWindow) {
   })
 }
 
-async function createFolder(): Promise<{
-  type: string
-  folderName: string
-  message: string
-}> {
+async function createFolder(folderName: string): Promise<CreateFolderResponse> {
   const folderPath = path.join(
     isDev() ? app.getAppPath() : app.getPath('desktop'),
-    '/tmp/test-folder'
+    folderName || 'new-folder'
   )
   console.log('Creating folder:', folderPath)
 

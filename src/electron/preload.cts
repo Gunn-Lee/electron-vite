@@ -11,13 +11,14 @@ electron.contextBridge.exposeInMainWorld('electron', {
     }),
   getStaticData: () => ipcInvoke('getStaticData'),
   sendFrameAction: (payload) => ipcSend('sendFrameAction', payload),
-  createFolder: () => ipcInvoke('createFolder')
+  createFolder: (folderName: string) => ipcInvoke('createFolder', folderName)
 } satisfies Window['electron'])
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(
-  key: Key
+  key: Key,
+  payload?: unknown
 ): Promise<EventPayloadMapping[Key]> {
-  return electron.ipcRenderer.invoke(key)
+  return electron.ipcRenderer.invoke(key, payload)
 }
 
 function ipcOn<Key extends keyof EventPayloadMapping>(

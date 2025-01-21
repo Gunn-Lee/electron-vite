@@ -1,18 +1,14 @@
 import { useState } from 'react'
 
-type CreateFolder = {
-  folderName: string
-}
-
-export function CreateFolder(props: CreateFolder) {
-  const [folderName, setFolderName] = useState(props.folderName)
+export function CreateFolder() {
+  const [folderName, setFolderName] = useState('new-folder')
 
   const handleCreateFolder = async () => {
     try {
       // Windows-specific folder path. Adjust as needed.
       // Note: Use double backslashes to escape in a JavaScript string.
 
-      const result = await window.electron.createFolder()
+      const result = await window.electron.createFolder(folderName)
       console.log(result)
       alert(result.message)
     } catch (error) {
@@ -27,7 +23,9 @@ export function CreateFolder(props: CreateFolder) {
 
   return (
     <div>
+      <label htmlFor="folder_name_input">Input Folder Name:</label>
       <input
+        name="folder_name_input"
         type="text"
         value={folderName}
         onChange={(e) => setFolderName(e.target.value)}

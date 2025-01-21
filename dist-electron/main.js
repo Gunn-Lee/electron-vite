@@ -37,8 +37,8 @@ app.on('ready', () => {
                 break;
         }
     });
-    ipcMainHandle('createFolder', async () => {
-        return await createFolder();
+    ipcMainHandle('createFolder', async (folderName) => {
+        return await createFolder(folderName || 'new-folder');
     });
     createTray(mainWindow);
     handleCloseEvents(mainWindow);
@@ -63,8 +63,8 @@ function handleCloseEvents(mainWindow) {
         willClose = false;
     });
 }
-async function createFolder() {
-    const folderPath = path.join(isDev() ? app.getAppPath() : app.getPath('desktop'), '/tmp/test-folder');
+async function createFolder(folderName) {
+    const folderPath = path.join(isDev() ? app.getAppPath() : app.getPath('desktop'), folderName || 'new-folder');
     console.log('Creating folder:', folderPath);
     // create folder logic
     try {

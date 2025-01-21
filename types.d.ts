@@ -14,7 +14,8 @@ type View = 'CPU' | 'RAM' | 'STORAGE'
 
 type FrameWindowAction = 'CLOSE' | 'MAXIMIZE' | 'MINIMIZE'
 
-type CreateFolder = {
+type CreateFolderRequest = string
+type CreateFolderResponse = {
   type: string
   folderName: string
   message: string
@@ -25,7 +26,7 @@ type EventPayloadMapping = {
   getStaticData: StaticData
   changeView: View
   sendFrameAction: FrameWindowAction
-  createFolder: CreateFoler
+  createFolder: CreateFolderRequest
 }
 
 type UnsubscribeFunction = () => void
@@ -38,6 +39,6 @@ interface Window {
     getStaticData: () => Promise<StaticData>
     subscribeChangeView: (callback: (view: View) => void) => UnsubscribeFunction
     sendFrameAction: (payload: FrameWindowAction) => void
-    createFolder: () => Promise<CreateFolder>
+    createFolder: (folderName: string) => Promise<CreateFolder>
   }
 }
